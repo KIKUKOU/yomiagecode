@@ -5,7 +5,7 @@ The class definition for check some marks in the text.
 
 import re
 
-url_pattern = 'http[s]?://\S+'  # noqa: W605
+url_pattern = 'http[s]?://\s+'  # noqa: W605
 # NOTE: 正規表現を記載しておりこれをprintするわけではないのでエスケープシークエンスのエラーは無視する.
 
 
