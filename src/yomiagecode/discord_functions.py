@@ -54,6 +54,9 @@ def play_sound(guild: discord.Guild, file_name: str, configs: dict[str, Any]) ->
     }
     voice = discord.FFmpegPCMAudio(file_name, **ffmpeg_options)
 
+    while voice_client.is_playing():
+        time.sleep(0.1)
+
     voice_client.play(voice)
     while voice_client.is_playing():
         time.sleep(0.1)

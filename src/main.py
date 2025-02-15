@@ -99,6 +99,7 @@ if __name__ == '__main__':
             if not after.channel.guild.voice_client:
                 await after.channel.connect()
 
+            sound_controller = sndutl.SoundController()
             user_name = member.display_name
             content = user_name + 'さんが参加しました'
             sound_file_name = await ttsfunc.make_sound_file(content, tts_client, configs['TTS'])
@@ -111,12 +112,15 @@ if __name__ == '__main__':
         elif before.channel is not None and after.channel is None:
             if len(before.channel.members) == 1 and before.channel.guild.voice_client:
                 await before.channel.guild.voice_client.disconnect()
+                await asyncio.sleep(0.1)
+
             else:
+                sound_controller = sndutl.SoundController()
                 user_name = member.display_name
                 content = user_name + 'さんが退出しました'
                 sound_file_name = await ttsfunc.make_sound_file(content, tts_client, configs['TTS'])
                 sound_controller = discordfunc.play_voice(
-                    after.channel.guild,
+                    before.channel.guild,
                     sound_controller,
                     sound_file_name,
                     configs,
@@ -144,6 +148,7 @@ if __name__ == '__main__':
             return
 
         if is_human and is_target_text_channel and not is_command and is_voice_in:
+            sound_controller = sndutl.SoundController()
             user_name = message.author.display_name
             sound_file_name = await ttsfunc.make_sound_file(user_name, tts_client, configs['TTS'])
             sound_controller = discordfunc.play_voice(message.guild, sound_controller, sound_file_name, configs)
