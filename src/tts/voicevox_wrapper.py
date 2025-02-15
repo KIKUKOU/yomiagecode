@@ -63,9 +63,9 @@ class VoicevoxWrapper(TTSWrapper):
         config = copy.deepcopy(config)
         params = {
             'text': text,
-            'speedScale': config.get('speed', 1.0),
-            'volumeScale': config.get('volume', 1.0),
-            'speaker': config.get('speaker', 1),
+            'speedScale': config.get('SPEED_SCALE', 1.0),
+            'volumeScale': config.get('VOLUME_SCALE', 1.0),
+            'speaker': config.get('SPEAKER_ID', 1),
         }
 
         try:
@@ -97,6 +97,9 @@ class VoicevoxWrapper(TTSWrapper):
             RuntimeError: If there's an error in the API call.
         """
         config = copy.deepcopy(config)
+        params = {
+            'speaker': config.get('SPEAKER_ID', 1),
+        }
         headers = {
             'Content-Type': 'application/json',
         }
@@ -105,7 +108,7 @@ class VoicevoxWrapper(TTSWrapper):
             with requests.post(
                 f'{self.client}/synthesis',
                 headers=headers,
-                params=config,
+                params=params,
                 data=json.dumps(audio_query),
                 timeout=30,
             ) as response:

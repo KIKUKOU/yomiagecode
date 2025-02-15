@@ -65,6 +65,7 @@ def play_voice(
     guild: discord.Guild,
     sound_controller: sndutl.SoundController,
     sound_file_name: str,
+    configs: dict[str, Any],
 ) -> sndutl.SoundController:
     # NOTE: どのTTSクライアントを受け取るかでどのクラスかが変わるのでAny.
     """
@@ -74,6 +75,7 @@ def play_voice(
         guild (discord.Guild): The received Guild object.
         sound_controller (sound_util.SoundController): The sound controller object.
         sound_file_name (str): 音声ファイル名
+        configs(dict[str, Any]): config辞書
 
     Returns:
         sound_util.SoundController: The updated sound controller.
@@ -83,7 +85,7 @@ def play_voice(
     #       For that purpose, we implemented parallel processing using threading.
     sound_controller.append_thread(
         play_sound,
-        (guild, sound_file_name),
+        (guild, sound_file_name, configs),
     )
 
     sound_controller.thread_control()

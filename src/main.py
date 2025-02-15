@@ -32,7 +32,7 @@ if __name__ == '__main__':
     discord_client = commands.Bot(command_prefix=configs['DISCORD']['COMMAND_PREFIX'], intents=intents)
 
     # TTS settings
-    tts_client = ttsfunc.get_tts_client()
+    tts_client = ttsfunc.get_tts_client(configs['TTS'])
 
     @discord_client.command()
     async def join(
@@ -90,7 +90,10 @@ if __name__ == '__main__':
             return
 
         # ユーザがVCに参加した場合
-        is_channel_matched = after.channel.id == configs['DISCORD']['TARGET_VOICE_CHANNEL']
+        if after.channel is not None:
+            is_channel_matched = after.channel.id == configs['DISCORD']['TARGET_VOICE_CHANNEL']
+        else:
+            is_channel_matched = False
         if before.channel is None and after.channel is not None and is_channel_matched:
             if not after.channel.guild.voice_client:
                 await after.channel.connect()
@@ -98,26 +101,27 @@ if __name__ == '__main__':
             sound_controller = sndutl.SoundController()
             user_name = member.display_name
             content = user_name + 'さんが参加しました'
-            sound_file_name = ttsfunc.make_sound_file(content, tts_client, configs['TTS'])
-            sound_controller = discordfunc.play_voice(after.channel.guild, sound_controller, sound_file_name)
+            sound_file_name = await ttsfunc.make_sound_file(content, tts_client, configs['TTS'])
+            sound_controller = discordfunc.play_voice(after.channel.guild, sound_controller, sound_file_name, configs)
             while not sound_controller.is_finish_all_thread():
                 await asyncio.sleep(0.1)
                 sound_controller.thread_control()
 
         # ユーザVCから離脱した場合
         elif before.channel is not None and after.channel is None:
-            sound_controller = sndutl.SoundController()
-            user_name = member.display_name
-            content = user_name + 'さんが退出しました'
-            sound_file_name = ttsfunc.make_sound_file(content, tts_client, configs['TTS'])
-            sound_controller = discordfunc.play_voice(after.channel.guild, sound_controller, sound_file_name)
-            while not sound_controller.is_finish_all_thread():
-                await asyncio.sleep(0.1)
-                sound_controller.thread_control()
-
-            # ユーザが全員VCから離脱した場合
             if len(before.channel.members) == 1 and before.channel.guild.voice_client:
                 await before.channel.guild.voice_client.disconnect()
+            else:
+                sound_controller = sndutl.SoundController()
+                user_name = member.display_name
+                content = user_name + 'さんが退出しました'
+                sound_file_name = await ttsfunc.make_sound_file(content, tts_client, configs['TTS'])
+                sound_controller = discordfunc.play_voice(
+                    after.channel.guild, sound_controller, sound_file_name, configs
+                )
+                while not sound_controller.is_finish_all_thread():
+                    await asyncio.sleep(0.1)
+                    sound_controller.thread_control()
 
     @discord_client.event
     async def on_message(
@@ -140,8 +144,8 @@ if __name__ == '__main__':
         if is_human and is_target_text_channel and not is_command and is_voice_in:
             sound_controller = sndutl.SoundController()
             user_name = message.author.display_name
-            sound_file_name = ttsfunc.make_sound_file(user_name, tts_client, configs['TTS'])
-            sound_controller = discordfunc.play_voice(message.guild, sound_controller, sound_file_name)
+            sound_file_name = await ttsfunc.make_sound_file(user_name, tts_client, configs['TTS'])
+            sound_controller = discordfunc.play_voice(message.guild, sound_controller, sound_file_name, configs)
 
             word_marks = txtutl.WordMarks()
             text_buffer = ''
@@ -151,8 +155,13 @@ if __name__ == '__main__':
                 is_sp, is_p, is_e, is_q, is_n = word_marks.check_letter(letter)
                 if not is_sp and is_make_voice and len(text_buffer) > 0:
                     text_buffer = txtutl.url2alternative_text(text_buffer, configs['TTS']['ALTERNATIVE_TEXT'])
-                    sound_file_name = ttsfunc.make_sound_file(text_buffer, tts_client, configs['TTS'])
-                    sound_controller = discordfunc.play_voice(message.guild, sound_controller, sound_file_name)
+                    sound_file_name = await ttsfunc.make_sound_file(text_buffer, tts_client, configs['TTS'])
+                    sound_controller = discordfunc.play_voice(
+                        message.guild,
+                        sound_controller,
+                        sound_file_name,
+                        configs,
+                    )
 
                     text_buffer = ''
                     await asyncio.sleep(0.1)
@@ -164,8 +173,8 @@ if __name__ == '__main__':
                     is_make_voice = True
 
             text_buffer = txtutl.url2alternative_text(text_buffer, configs['TTS']['ALTERNATIVE_TEXT'])
-            sound_file_name = ttsfunc.make_sound_file(text_buffer, tts_client, configs['TTS'])
-            sound_controller = discordfunc.play_voice(message.guild, sound_controller, sound_file_name)
+            sound_file_name = await ttsfunc.make_sound_file(text_buffer, tts_client, configs['TTS'])
+            sound_controller = discordfunc.play_voice(message.guild, sound_controller, sound_file_name, configs)
             while not sound_controller.is_finish_all_thread():
                 await asyncio.sleep(0.1)
                 sound_controller.thread_control()

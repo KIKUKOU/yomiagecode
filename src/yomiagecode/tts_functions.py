@@ -22,13 +22,13 @@ def get_tts_client(tts_configs: dict | None = None) -> Any:  # noqa: ANN401
     """
     if tts_configs is None:
         tts_configs = {
-            'use_tts': 'voicevox',
-            'tts_host_ip': '192.168.0.1',
-            'tts_host_port': 50021,
+            'USE_TTS': 'voicevox',
+            'HOST_IP': '192.168.0.1',
+            'PORT': 50021,
         }
 
-    if tts_configs['use_tts'] == 'voicevox':
-        tts_address = f'{tts_configs["tts_host_ip"]}:{tts_configs["tts_host_port"]}'
+    if tts_configs['USE_TTS'] == 'voicevox':
+        tts_address = f'{tts_configs["HOST_IP"]}:{tts_configs["PORT"]}'
         tts_client = VoicevoxWrapper(tts_address)
 
     return tts_client
@@ -47,6 +47,7 @@ async def make_sound_file(text: str, tts_client: Any, tts_configs: dict | None) 
     Returns:
         str: voiceデータのファイルネーム
     """
+    print(tts_configs)
     audio_query = tts_client.generate_audio_query(text, tts_configs)
     voice_data = tts_client.generate_voice(audio_query, tts_configs)
     return sndutl.generate_temp_wav(voice_data)
