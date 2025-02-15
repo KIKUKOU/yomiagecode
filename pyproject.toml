@@ -11,8 +11,8 @@ authors = [{ name = "KIKUKOU", email = "baseballsoul.no3@gmail.com" }]
 
 license = { file = "LICENSE" }
 
-requires-python = ">=3.13"
-classifiers = ["Programming Language :: Python :: 3.13"]
+requires-python = ">=3.12"
+classifiers = ["Programming Language :: Python :: 3.12"]
 keywords = ["discord bot"]
 
 dependencies = [
@@ -41,7 +41,7 @@ my_awesome_package = "src"
 line-length = 119
 select = ["ALL"]
 ignore = ["D200", "D205", "D212", "PLR1711", "SIM108", "TD002", "UP015"]
-target-version = "py313"
+target-version = "py312"
 
 [tool.ruff.per-file-ignores]
 "src/tts/tts_wrapper.py" = ["ANN401"]

@@ -1,4 +1,4 @@
-name: AI System CI/CD
+name: yomiagecode CI/CD
 
 on:
   push:
@@ -19,13 +19,14 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install poetry
-          poetry install
+          pip install setuptools
+          pip install .[dev]
+          pip install .[test]
 
       - name: Run pre-commit hooks
         uses: pre-commit/action@v3.0.0
 
       - name: Lint and Type Check with Ruff
         run: |
-          poetry run ruff check .
-          poetry run ruff format --check .
+          ruff check .
+          ruff format --check .
