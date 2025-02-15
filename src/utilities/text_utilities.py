@@ -146,11 +146,8 @@ class URLcontroller:
             str: URL部分を代替テキストに変換した文章
         """
         url_list = re.findall(self.url_pattern, text)
-        print(url_list)
-        print(text)
+
         for url in url_list:
             text = text.replace(url, alternative_text)
-
-        print(text)
 
         return text
