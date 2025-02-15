@@ -117,7 +117,7 @@ class URLcontroller:
 
         NOTE: RUF001 was ignored, assuming it may contain similar characters in Unicode.
         """
-        self.url_pattern = '(https?|ftp)(:\/\/[\w\/:%#\$&\?\(\)~\.=\+\-]+)'  # noqa: W605
+        self.url_pattern = 'http[s]?://\S+'  # noqa: W605
         # NOTE: 正規表現を記載しておりこれをprintするわけではないのでエスケープシークエンスのエラーは無視する.
         return
 
@@ -146,7 +146,11 @@ class URLcontroller:
             str: URL部分を代替テキストに変換した文章
         """
         url_list = re.findall(self.url_pattern, text)
+        print(url_list)
+        print(text)
         for url in url_list:
             text = text.replace(url, alternative_text)
+
+        print(text)
 
         return text
