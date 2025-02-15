@@ -33,6 +33,7 @@ if __name__ == '__main__':
 
     # TTS settings
     tts_client = ttsfunc.get_tts_client(configs['TTS'])
+    sound_controller = sndutl.SoundController()
 
     @discord_client.command()
     async def join(
@@ -98,7 +99,6 @@ if __name__ == '__main__':
             if not after.channel.guild.voice_client:
                 await after.channel.connect()
 
-            sound_controller = sndutl.SoundController()
             user_name = member.display_name
             content = user_name + 'さんが参加しました'
             sound_file_name = await ttsfunc.make_sound_file(content, tts_client, configs['TTS'])
@@ -112,7 +112,6 @@ if __name__ == '__main__':
             if len(before.channel.members) == 1 and before.channel.guild.voice_client:
                 await before.channel.guild.voice_client.disconnect()
             else:
-                sound_controller = sndutl.SoundController()
                 user_name = member.display_name
                 content = user_name + 'さんが退出しました'
                 sound_file_name = await ttsfunc.make_sound_file(content, tts_client, configs['TTS'])
@@ -137,7 +136,7 @@ if __name__ == '__main__':
             message (discord.Message): The received message object.
         """
         is_human = not message.author.bot
-        is_target_text_channel = message.channel.name == configs['DISCORD']['TARGET_TEXT_CHANNEL']
+        is_target_text_channel = message.channel.id == configs['DISCORD']['TARGET_TEXT_CHANNEL']
         is_voice_in = message.guild.voice_client is not None
         if len(message.content) > 0:
             is_command = message.content[0] == configs['DISCORD']['COMMAND_PREFIX']
@@ -145,7 +144,6 @@ if __name__ == '__main__':
             return
 
         if is_human and is_target_text_channel and not is_command and is_voice_in:
-            sound_controller = sndutl.SoundController()
             user_name = message.author.display_name
             sound_file_name = await ttsfunc.make_sound_file(user_name, tts_client, configs['TTS'])
             sound_controller = discordfunc.play_voice(message.guild, sound_controller, sound_file_name, configs)
