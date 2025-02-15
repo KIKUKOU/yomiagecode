@@ -47,7 +47,6 @@ async def make_sound_file(text: str, tts_client: Any, tts_configs: dict | None) 
     Returns:
         str: voiceデータのファイルネーム
     """
-    print(tts_configs)
     audio_query = tts_client.generate_audio_query(text, tts_configs)
     voice_data = tts_client.generate_voice(audio_query, tts_configs)
     return sndutl.generate_temp_wav(voice_data)

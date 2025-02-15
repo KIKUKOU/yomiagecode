@@ -117,7 +117,10 @@ if __name__ == '__main__':
                 content = user_name + 'さんが退出しました'
                 sound_file_name = await ttsfunc.make_sound_file(content, tts_client, configs['TTS'])
                 sound_controller = discordfunc.play_voice(
-                    after.channel.guild, sound_controller, sound_file_name, configs
+                    after.channel.guild,
+                    sound_controller,
+                    sound_file_name,
+                    configs,
                 )
                 while not sound_controller.is_finish_all_thread():
                     await asyncio.sleep(0.1)
