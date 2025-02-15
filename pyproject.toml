@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "yomiagecode"
+version = "0.0.1"
+description = "discordのテキストチャットの読み上げbot"
+readme = "README.md"
+authors = [{ name = "KIKUKOU", email = "baseballsoul.no3@gmail.com" }]
+
+license = { file = "LICENSE" }
+
+requires-python = ">=3.13"
+classifiers = ["Programming Language :: Python :: 3.13"]
+keywords = ["discord bot"]
+
+dependencies = [
+    "discord.py[voice]",
+    "requests",
+    "ffmpeg-python",
+    "google-cloud-texttospeech",
+    "pyyaml",
+    "pyaudio",
+]
+
+[project.optional-dependencies]
+dev = ["ruff"]
+test = ["pytest"]
+
+[project.urls]
+Homepage = "https://github.com/KIKUKOU/yomiagecode"
+Repository = "https://github.com/KIKUKOU/yomiagecode.git"
+Issues = "https://github.com/KIKUKOU/yomiagecode/issues"
+
+[tool.setuptools.package-dir]
+my_awesome_package = "src"
+"_" = "src/tests"
+
+[tool.ruff]
+line-length = 119
+select = ["ALL"]
+ignore = ["D200", "D205", "D212", "PLR1711", "SIM108", "TD002", "UP015"]
+target-version = "py313"
+
+[tool.ruff.per-file-ignores]
+"src/tts/tts_wrapper.py" = ["ANN401"]
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "single"
+multiline-quotes = "single"
+
+[tool.ruff.pydocstyle]
+convention = "google"
+
+[tool.ruff.format]
+quote-style = "single"
