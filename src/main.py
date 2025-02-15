@@ -23,7 +23,7 @@ GOOGLE_CSE_ID = os.getenv('GOOGLE_CUSTOM_SEARCH_CSE_ID')
 
 if __name__ == '__main__':
     # configファイルを読み込む
-    configs = confutl.load_config('../data/config.yaml')
+    configs = confutl.load_config('./data/config.yaml')
 
     # Discord bot permission settings
     intents = discord.Intents.default()
