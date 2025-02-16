@@ -17,6 +17,7 @@ keywords = ["discord bot"]
 
 dependencies = [
     "discord.py[voice]",
+    "azure-cognitiveservices-speech",
     "requests",
     "ffmpeg-python",
     "google-cloud-texttospeech",
