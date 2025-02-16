@@ -5,9 +5,6 @@ The class definition for check some marks in the text.
 
 import re
 
-url_pattern = 'http[s]?://\s+'  # noqa: W605
-# NOTE: 正規表現を記載しておりこれをprintするわけではないのでエスケープシークエンスのエラーは無視する.
-
 
 class WordMarks:
     """
@@ -24,6 +21,7 @@ class WordMarks:
         self.exclamation_marks = ['!', '！']  # noqa: RUF001
         self.question_marks = ['?', '？']  # noqa: RUF001
         self.new_line_marks = ['\n', '\r']
+        self.space_marks = [' ', '　']
         # NOTE: Japanese sentence, so use Full-width letter.
         return
 
@@ -102,24 +100,54 @@ class WordMarks:
         is_e = letter in self.exclamation_marks
         is_q = letter in self.question_marks
         is_n = letter in self.new_line_marks
-        is_sp = is_p or is_e or is_q or is_n
-        return is_sp, is_p, is_e, is_q, is_n
+        is_s = letter in self.space_marks
+        is_sp = is_p or is_e or is_q or is_n or is_s
+
+        return is_sp, is_p, is_e, is_q, is_n, is_s
 
 
-def url2alternative_text(text: str, alternative_text: str = 'URL') -> str:
+class URLcontroller:
     """
-    文章中のURLを代替テキストに変換する.
-
-    Args:
-        text (str): 変換対象の文章
-        alternative_text (str): 代替テキスト
-            Defaults; 'URL'
-
-    Returns:
-        str: URL部分を代替テキストに変換した文章
+    Define URL checker and controller.
     """
-    url_list = re.findall(url_pattern, text)
-    for url in url_list:
-        text = text.replace(url, alternative_text)
 
-    return text
+    def __init__(self) -> None:
+        """
+        Define text split marks.
+
+        NOTE: RUF001 was ignored, assuming it may contain similar characters in Unicode.
+        """
+        self.url_pattern = 'http[s]?://\S+'  # noqa: W605
+        # NOTE: 正規表現を記載しておりこれをprintするわけではないのでエスケープシークエンスのエラーは無視する.
+        return
+
+    def is_including_url(self, text: str) -> bool:
+        """
+        文章中にURLを含むかチェックする.
+
+        Args:
+            text (str): 確認対象の文章
+
+        Returns:
+            bool: URLを文章に含むか判定
+        """
+        return len(re.findall(self.url_pattern, text)) > 0
+
+    def url2alternative_text(self, text: str, alternative_text: str = 'URL') -> str:
+        """
+        文章中のURLを代替テキストに変換する.
+
+        Args:
+            text (str): 変換対象の文章
+            alternative_text (str): 代替テキスト
+                Defaults; 'URL'
+
+        Returns:
+            str: URL部分を代替テキストに変換した文章
+        """
+        url_list = re.findall(self.url_pattern, text)
+
+        for url in url_list:
+            text = text.replace(url, alternative_text)
+
+        return text

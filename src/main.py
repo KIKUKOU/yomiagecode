@@ -154,13 +154,15 @@ if __name__ == '__main__':
             sound_controller = discordfunc.play_voice(message.guild, sound_controller, sound_file_name, configs)
 
             word_marks = txtutl.WordMarks()
+            url_ctrl = txtutl.URLcontroller()
             text_buffer = ''
             is_make_voice = False
             message_text = message.content
             for letter in message_text:
-                is_sp, is_p, is_e, is_q, is_n = word_marks.check_letter(letter)
+                is_sp, is_p, is_e, is_q, is_n, is_s = word_marks.check_letter(letter)
+                is_including_url = url_ctrl.is_including_url(text_buffer)
                 if not is_sp and is_make_voice and len(text_buffer) > 0:
-                    text_buffer = txtutl.url2alternative_text(text_buffer, configs['TTS']['ALTERNATIVE_TEXT'])
+                    text_buffer = url_ctrl.url2alternative_text(text_buffer, configs['TTS']['ALTERNATIVE_TEXT'])
                     sound_file_name = await ttsfunc.make_sound_file(text_buffer, tts_client, configs['TTS'])
                     sound_controller = discordfunc.play_voice(
                         message.guild,
@@ -169,16 +171,20 @@ if __name__ == '__main__':
                         configs,
                     )
 
+                    is_make_voice = False
                     text_buffer = ''
                     await asyncio.sleep(0.1)
 
                 if not is_n:
                     text_buffer = text_buffer + letter
 
-                if is_sp:
+                if is_sp and not is_including_url:
                     is_make_voice = True
 
-            text_buffer = txtutl.url2alternative_text(text_buffer, configs['TTS']['ALTERNATIVE_TEXT'])
+                if is_including_url and is_s:
+                    is_make_voice = True
+
+            text_buffer = url_ctrl.url2alternative_text(text_buffer, configs['TTS']['ALTERNATIVE_TEXT'])
             sound_file_name = await ttsfunc.make_sound_file(text_buffer, tts_client, configs['TTS'])
             sound_controller = discordfunc.play_voice(message.guild, sound_controller, sound_file_name, configs)
             while not sound_controller.is_finish_all_thread():
