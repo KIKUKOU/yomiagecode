@@ -1,7 +1,0 @@
-{
-    "[python]": {
-        "editor.defaultFormatter": "charliermarsh.ruff",
-        "editor.formatOnType": true
-    },
-    "ruff.organizeImports": false,
-}
