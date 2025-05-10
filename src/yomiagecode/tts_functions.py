@@ -36,7 +36,7 @@ def get_tts_client(tts_configs: dict | None = None) -> Any:  # noqa: ANN401
     if tts_configs['USE_TTS'] == 'VOICEVOX':
         tts_address = f'{tts_configs["HOST_IP"]}:{tts_configs["PORT"]}'
         tts_client = VoicevoxWrapper(tts_address)
-    elif tts_configs['USE_TTS'] == 'Azure':
+    elif tts_configs['USE_TTS'] == 'USE_TTS':
         tts_client = AzureWrapper(tts_configs['AZURE'])
 
     return tts_client
