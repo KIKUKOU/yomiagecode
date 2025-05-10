@@ -4,7 +4,6 @@ The abstract class for wrap tts.
 """
 
 import tempfile
-import wave
 from typing import Any
 
 from azure.cognitiveservices.speech import AudioConfig, SpeechConfig, SpeechSynthesizer
@@ -42,9 +41,7 @@ class AzureWrapper(TTSWrapper):
         if tts_configs['AZURE']['SPEAKER_ID'] != '':
             self.speech_config.speech_synthesis_voice_name = tts_configs['AZURE']['SPEAKER_ID']
 
-        with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as wf:
-            wf.write(b'')
-            self.file_path = wf.name
+        self.file_path = ''
 
         self.audio_config = AudioConfig(filename=self.file_path)
         self.client = SpeechSynthesizer(speech_config=self.speech_config, audio_config=self.audio_config)
@@ -93,5 +90,11 @@ class AzureWrapper(TTSWrapper):
             self.speech_config.speech_synthesis_voice_name = tts_configs['AZURE']['SPEAKER_ID']
             self.client = SpeechSynthesizer(speech_config=self.speech_config, audio_config=self.audio_config)
 
+        with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as wf:
+            wf.write(b'')
+            file_path = wf.name
+
+        self.audio_config = AudioConfig(filename=self.file_path)
+        self.client = SpeechSynthesizer(speech_config=self.speech_config, audio_config=self.audio_config)
         self.client.speak_text_async(audio_query).get()
-        return self.file_path
+        return file_path
