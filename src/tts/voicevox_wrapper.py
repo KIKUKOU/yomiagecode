@@ -40,7 +40,6 @@ class VoicevoxWrapper(TTSWrapper):
         self.client = f'http://{address}'
         self.speakers_name_dict = {-1: 'NoVoice'}
         self.speakers_name_dict = self.speakers_name_dict | self._fetch_speakers()
-        return
 
     def generate_audio_query(
         self,
