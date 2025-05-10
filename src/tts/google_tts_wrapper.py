@@ -25,7 +25,7 @@ class GoogleTTSWrapper(TTSWrapper):
     This class provides methods to interact with the Google-TTS API.
     """
 
-    def __init__(self, credential_file_name: str | None = None, config: dict[str, Any] | None = None) -> None:
+    def __init__(self, credential_file_name: str | None = None, tts_configs: dict[str, Any] | None = None) -> None:
         """
         Initialize the Google-TTS wrapper.
 
@@ -33,11 +33,11 @@ class GoogleTTSWrapper(TTSWrapper):
             credential_file_name (str | None): The Google credential json file name.
                 (ex. './hoge/fuga/credential.json') If it is None, use environment value.
                 Default to None.
-            config (dict[str, Any] | None, optional): Configuration options for the TTS.
+            tts_configs (dict[str, Any] | None, optional): Configuration options for the TTS.
                 Defaults to None.
         """
-        config = config or {}
-        config = copy.deepcopy(config)
+        tts_configs = tts_configs or {}
+        tts_configs = copy.deepcopy(tts_configs)
 
         if credential_file_name is None:
             self.client = texttospeech.TextToSpeechClient()
@@ -51,30 +51,30 @@ class GoogleTTSWrapper(TTSWrapper):
             3: 'ja-JP-Neural2-D',
         }
 
-    def generate_audio_query(self, text: str, config: dict[str, Any] | None = None) -> SynthesisInput:
+    def generate_audio_query(self, text: str, tts_configs: dict[str, Any] | None = None) -> SynthesisInput:
         """
         Generate an audio query from the given text.
 
         Args:
             text (str): The text to be converted to speech.
-            config (dict[str, Any] | None, optional): Configuration options for the audio query.
+            tts_configs (dict[str, Any] | None, optional): Configuration options for the audio query.
                 Defaults to None.
 
         Returns:
             SynthesisInput: The generated audio query for google-tts.
         """
-        config = config or {}
-        config = copy.deepcopy(config)
+        tts_configs = tts_configs or {}
+        tts_configs = copy.deepcopy(tts_configs)
 
         return texttospeech.SynthesisInput(text=text)
 
-    def generate_voice(self, audio_query: SynthesisInput, config: dict[str, Any] | None = None) -> bytes:
+    def generate_voice(self, audio_query: SynthesisInput, tts_configs: dict[str, Any] | None = None) -> bytes:
         """
         Generate voice data from the given audio query.
 
         Args:
             audio_query (SynthesisInput): The audio query to be converted to voice.
-            config (dict[str, Any] | None, optional): Configuration options for voice generation.
+            tts_configs (dict[str, Any] | None, optional): Configuration options for voice generation.
 
         Returns:
             bytes: The generated voice data in wav format.
@@ -82,13 +82,13 @@ class GoogleTTSWrapper(TTSWrapper):
         Raises:
             RuntimeError: If there's an error in the API call.
         """
-        config = config or {}
-        config = copy.deepcopy(config)
+        tts_configs = tts_configs or {}
+        tts_configs = copy.deepcopy(tts_configs)
 
-        speaker_name = self.speakers_name_dict.get(config.get('speaker', 1))
-        speaking_rate = config.get('speed', 1.25)
-        volume_gain_db = self._calculate_volume_gain(config.get('volume', 1.0))
-        language_code = config.get('language_code', 'ja-JP')
+        speaker_name = self.speakers_name_dict.get(tts_configs['GOOGLE'].get('SPEAKER_ID', 1))
+        speaking_rate = tts_configs['GOOGLE'].get('SPEED_SCALE', 1.25)
+        volume_gain_db = self._calculate_volume_gain(tts_configs['GOOGLE'].get('VOLUME_SCALE', 1.0))
+        language_code = tts_configs['GOOGLE'].get('LANGUAGE_CODE', 'ja-JP')
 
         voice = texttospeech.VoiceSelectionParams(
             name=speaker_name,
