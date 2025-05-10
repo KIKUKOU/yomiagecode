@@ -41,7 +41,7 @@ class AzureWrapper(TTSWrapper):
         if tts_configs['AZURE']['SPEAKER_ID'] != '':
             self.speech_config.speech_synthesis_voice_name = tts_configs['AZURE']['SPEAKER_ID']
 
-        self.audio_config = AudioConfig(filename=self.file_path)
+        self.audio_config = AudioConfig(filename='')
         self.client = SpeechSynthesizer(speech_config=self.speech_config, audio_config=self.audio_config)
         self.speakers_name_dict = {
             'ja-JP-NanamiNeural': 'Nanami@Normal',
