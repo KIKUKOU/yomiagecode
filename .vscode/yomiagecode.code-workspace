@@ -1,0 +1,31 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"[python]": {
+			"editor.defaultFormatter": "charliermarsh.ruff",
+			"editor.formatOnSave": true,
+			"editor.codeActionsOnSave": {
+				"source.fixAll.ruff": "explicit",
+				"source.organizeImports": "explicit"
+			},
+		},
+		"python.analysis.autoSearchPaths": true,
+		"python.analysis.diagnosticMode": "workspace",
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-python.python",
+			"ms-python.debugpy",
+			"ms-python.vscode-pylance",
+			"charliermarsh.ruff",
+			"visualstudioexptteam.vscodeintellicode",
+			"redhat.vscode-yaml",
+			"tamasfe.even-better-toml",
+		],
+		"unwantedRecommendations": []
+	},
+}

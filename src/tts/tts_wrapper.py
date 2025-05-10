@@ -19,13 +19,13 @@ class TTSWrapper(metaclass=ABCMeta):
     @abstractmethod
     def __init__(
         self,
-        config: dict[str, Any] | None = None,
+        tts_configs: dict[str, Any] | None = None,
     ) -> None:
         """
         Initialize the TTS wrapper.
 
         Args:
-            config (dict[str, Any] | None, optional): Configuration options for the TTS. Defaults to None.
+            tts_configs (dict[str, Any] | None, optional): Configuration options for the TTS. Defaults to None.
 
         Raises:
             NotImplementedError: If not implemented in subclass.
@@ -36,13 +36,13 @@ class TTSWrapper(metaclass=ABCMeta):
         raise NotImplementedError(raise_massage)
 
     @abstractmethod
-    def generate_audio_query(self, text: str, config: dict[str, Any] | None = None) -> Any:
+    def generate_audio_query(self, text: str, tts_configs: dict[str, Any] | None = None) -> Any:
         """
         Generate an audio query from the given text.
 
         Args:
             text (str): The text to be converted to speech.
-            config (dict[str, Any] | None): Configuration options for the audio query. Defaults to None.
+            tts_configs (dict[str, Any] | None): Configuration options for the audio query. Defaults to None.
 
         Returns:
             Any: The generated audio query.
@@ -57,14 +57,14 @@ class TTSWrapper(metaclass=ABCMeta):
     def generate_voice(
         self,
         audio_query: Any,
-        config: dict[str, Any] | None = None,
+        tts_configs: dict[str, Any] | None = None,
     ) -> bytes:
         """
         Generate voice data from the given audio query.
 
         Args:
             audio_query (Any): The audio query to be converted to voice.
-            config (dict[str, Any]): Configuration options for voice generation. Defaults to None.
+            tts_configs (dict[str, Any]): Configuration options for voice generation. Defaults to None.
 
         Returns:
             Any: The generated voice data.
