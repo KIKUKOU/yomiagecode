@@ -20,27 +20,27 @@ class AzureWrapper(TTSWrapper):
     AzureのTTSを利用するためのWrapper.
     """
 
-    def __init__(self, config: dict[str, Any] | None = None) -> None:
+    def __init__(self, tts_configs: dict[str, Any] | None = None) -> None:
         """
         Initialize the TTS wrapper.
 
         Args:
             api_key (str): AzureのAPI key.
             region (str): AzureのAPI. 東日本; japaneast, 西日本; japanwest
-            config (dict[str, Any] | None, optional): Configuration options for the TTS. Defaults to None.
+            tts_configs (dict[str, Any] | None, optional): Configuration options for the TTS. Defaults to None.
 
         Raises:
             NotImplementedError: If not implemented in subclass.
         """
-        api_key = config['API_KEY']
-        region = config['REGION']  # NOTE: AzureのAPI. 東日本; japaneast, 西日本; japanwest
+        api_key = tts_configs['AZURE']['API_KEY']
+        region = tts_configs['AZURE']['REGION']  # NOTE: AzureのAPI. 東日本; japaneast, 西日本; japanwest
         self.speech_config = SpeechConfig(
             subscription=api_key,
             region=region,
             speech_recognition_language='ja-JP',
         )
-        if config['SPEAKER_ID'] != '':
-            self.speech_config.speech_synthesis_voice_name = config['SPEAKER_ID']
+        if tts_configs['AZURE']['SPEAKER_ID'] != '':
+            self.speech_config.speech_synthesis_voice_name = tts_configs['AZURE']['SPEAKER_ID']
 
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as wf:
             wf.write(b'')
@@ -60,14 +60,14 @@ class AzureWrapper(TTSWrapper):
             'ja-JP-Masaru:DragonHDLatestNeural': 'Masaru@DragonHDLatest',
         }
 
-    def generate_audio_query(self, text: str, config: dict[str, Any] | None = None) -> None:  # noqa: ARG002
+    def generate_audio_query(self, text: str, tts_configs: dict[str, Any] | None = None) -> None:  # noqa: ARG002
         # NOTE: 他のAPIと合わせるためにデータは受けるが使わない.
         """
         Generate an audio query from the given text.
 
         Args:
             text (str): 音声変換したい文章
-            config (dict[str, Any] | None): 他のAPIと合わせるために一旦受けるが捨てる
+            tts_configs (dict[str, Any] | None): 他のAPIと合わせるために一旦受けるが捨てる
 
         Returns:
             str: クエリはstrの文章とみなして文章をそのまま返す
@@ -77,22 +77,21 @@ class AzureWrapper(TTSWrapper):
     def generate_voice(
         self,
         audio_query: str,
-        config: dict[str, Any] | None = None,
+        tts_configs: dict[str, Any] | None = None,
     ) -> bytes:
         """
         Generate voice data from the given audio query.
 
         Args:
             audio_query (None): 他のAPIと合わせるために一旦受けるが捨てる
-            config (dict[str, Any]): Configuration options for voice generation. Defaults to None.
+            tts_configs (dict[str, Any]): Configuration options for voice generation. Defaults to None.
 
         Returns:
             Any: The generated voice data.
         """
-        if config['SPEAKER_ID'] != '':
-            self.speech_config.speech_synthesis_voice_name = config['SPEAKER_ID']
+        if tts_configs['AZURE']['SPEAKER_ID'] != '':
+            self.speech_config.speech_synthesis_voice_name = tts_configs['AZURE']['SPEAKER_ID']
             self.client = SpeechSynthesizer(speech_config=self.speech_config, audio_config=self.audio_config)
 
         self.client.speak_text_async(audio_query).get()
-        with wave.open(self.file_path, 'rb') as wf:
-            return wf.readframes(-1)
+        return self.file_path

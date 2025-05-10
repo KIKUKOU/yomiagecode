@@ -25,17 +25,17 @@ class VoicevoxWrapper(TTSWrapper):
     def __init__(
         self,
         address: str = '127.0.0.1:50021',
-        config: dict[str, Any] | None = None,
+        tts_configs: dict[str, Any] | None = None,
     ) -> None:
         """
         Initialize the voicevox wrapper.
 
         Args:
             address (str): The Voicevox server ip address with port. Dafault in '127.0.0.1:50021'.
-            config (dict[str, Any], optional): Configuration options for the TTS. Defaults to None.
+            tts_configs (dict[str, Any], optional): Configuration options for the TTS. Defaults to None.
         """
-        config = config or {}
-        config = copy.deepcopy(config)
+        tts_configs = tts_configs or {}
+        tts_configs = copy.deepcopy(tts_configs)
 
         self.client = f'http://{address}'
         self.speakers_name_dict = {-1: 'NoVoice'}
@@ -44,14 +44,14 @@ class VoicevoxWrapper(TTSWrapper):
     def generate_audio_query(
         self,
         text: str,
-        config: dict[str, Any] | None = None,
+        tts_configs: dict[str, Any] | None = None,
     ) -> dict:
         """
         Generate an audio query from the given text.
 
         Args:
             text (str): The text to be converted to speech.
-            config (dict[str, Any]): Configuration options for the audio query.  Defaults to None.
+            tts_configs (dict[str, Any]): Configuration options for the audio query.  Defaults to None.
 
         Returns:
             dict: The generated audio query for voicevox.
@@ -59,12 +59,12 @@ class VoicevoxWrapper(TTSWrapper):
         Raises:
             RuntimeError: If there's an error in the API call.
         """
-        config = copy.deepcopy(config)
+        tts_configs = copy.deepcopy(tts_configs)
         params = {
             'text': text,
-            'speedScale': config.get('SPEED_SCALE', 1.0),
-            'volumeScale': config.get('VOLUME_SCALE', 1.0),
-            'speaker': config.get('SPEAKER_ID', 1),
+            'speedScale': tts_configs['VOICEVOX'].get('SPEED_SCALE', 1.0),
+            'volumeScale': tts_configs['VOICEVOX'].get('VOLUME_SCALE', 1.0),
+            'speaker': tts_configs['VOICEVOX'].get('SPEAKER_ID', 1),
         }
 
         try:
@@ -80,14 +80,14 @@ class VoicevoxWrapper(TTSWrapper):
     def generate_voice(
         self,
         audio_query: dict,
-        config: dict[str, Any] | None = None,
+        tts_configs: dict[str, Any] | None = None,
     ) -> bytes:
         """
         Generate voice data from the given audio query.
 
         Args:
             audio_query (dict): The audio query to be converted to voice.
-            config (dict[str, Any]): Configuration options for voice generation. Defaults to None.
+            tts_configs (dict[str, Any]): Configuration options for voice generation. Defaults to None.
 
         Returns:
             bytes: The generated voice data in wav format.
@@ -95,9 +95,9 @@ class VoicevoxWrapper(TTSWrapper):
         Raises:
             RuntimeError: If there's an error in the API call.
         """
-        config = copy.deepcopy(config)
+        tts_configs = copy.deepcopy(tts_configs)
         params = {
-            'speaker': config.get('SPEAKER_ID', 1),
+            'speaker': tts_configs['VOICEVOX'].get('SPEAKER_ID', 1),
         }
         headers = {
             'Content-Type': 'application/json',
