@@ -94,7 +94,7 @@ class AzureWrapper(TTSWrapper):
             wf.write(b'')
             file_path = wf.name
 
-        self.audio_config = AudioConfig(filename=self.file_path)
+        self.audio_config = AudioConfig(filename=file_path)
         self.client = SpeechSynthesizer(speech_config=self.speech_config, audio_config=self.audio_config)
         self.client.speak_text_async(audio_query).get()
         return file_path
