@@ -6,6 +6,7 @@ discord bot用のTTSに関する関数を載せたファイル.
 from typing import Any
 
 import utilities.sound_utilities as sndutl
+from tts.azure_wrapper import AzureWrapper
 from tts.voicevox_wrapper import VoicevoxWrapper
 
 
@@ -22,14 +23,21 @@ def get_tts_client(tts_configs: dict | None = None) -> Any:  # noqa: ANN401
     """
     if tts_configs is None:
         tts_configs = {
-            'USE_TTS': 'voicevox',
-            'HOST_IP': '192.168.0.1',
-            'PORT': 50021,
+            'USE_TTS': 'VOICEVOX',
+            'VOICEVOX': {
+                'HOST_IP': '192.168.0.1',
+                'PORT': 50021,
+                'SPEAKER_ID': 46,
+                'SPEED_SCALE': 1.2,
+                'VOLUME_SCALE': 0.4,
+            },
         }
 
-    if tts_configs['USE_TTS'] == 'voicevox':
+    if tts_configs['USE_TTS'] == 'VOICEVOX':
         tts_address = f'{tts_configs["HOST_IP"]}:{tts_configs["PORT"]}'
         tts_client = VoicevoxWrapper(tts_address)
+    elif tts_configs['USE_TTS'] == 'Azure':
+        tts_client = AzureWrapper(tts_configs['AZURE'])
 
     return tts_client
 
