@@ -91,10 +91,9 @@ class AzureWrapper(TTSWrapper):
         Returns:
             Any: The generated voice data.
         """
-        if tts_configs["AZURE"]["SPEAKER_ID"] != "":
-            self.speech_config.speech_synthesis_voice_name = tts_configs["AZURE"][
-                "SPEAKER_ID"
-            ]
+
+        if tts_configs['AZURE']['SPEAKER_ID'] != '':
+            self.speech_config.speech_synthesis_voice_name = tts_configs['AZURE']['SPEAKER_ID']
 
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as wf:
             wf.write(b"")
