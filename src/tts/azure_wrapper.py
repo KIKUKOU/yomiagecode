@@ -88,13 +88,12 @@ class AzureWrapper(TTSWrapper):
         """
         if tts_configs['AZURE']['SPEAKER_ID'] != '':
             self.speech_config.speech_synthesis_voice_name = tts_configs['AZURE']['SPEAKER_ID']
-            self.client = SpeechSynthesizer(speech_config=self.speech_config, audio_config=self.audio_config)
 
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as wf:
             wf.write(b'')
             file_path = wf.name
 
-        self.audio_config = AudioConfig(filename=self.file_path)
+        self.audio_config = AudioConfig(filename=file_path)
         self.client = SpeechSynthesizer(speech_config=self.speech_config, audio_config=self.audio_config)
         self.client.speak_text_async(audio_query).get()
         return file_path
