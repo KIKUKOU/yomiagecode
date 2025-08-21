@@ -31,31 +31,38 @@ class AzureWrapper(TTSWrapper):
         Raises:
             NotImplementedError: If not implemented in subclass.
         """
-        api_key = tts_configs['AZURE']['API_KEY']
-        region = tts_configs['AZURE']['REGION']  # NOTE: AzureのAPI. 東日本; japaneast, 西日本; japanwest
+        api_key = tts_configs["AZURE"]["API_KEY"]
+        region = tts_configs["AZURE"]["REGION"]
+        # NOTE: AzureのAPI. 東日本; japaneast, 西日本; japanwest
         self.speech_config = SpeechConfig(
             subscription=api_key,
             region=region,
-            speech_recognition_language='ja-JP',
+            speech_recognition_language="ja-JP",
         )
-        if tts_configs['AZURE']['SPEAKER_ID'] != '':
-            self.speech_config.speech_synthesis_voice_name = tts_configs['AZURE']['SPEAKER_ID']
+        if tts_configs["AZURE"]["SPEAKER_ID"] != "":
+            self.speech_config.speech_synthesis_voice_name = tts_configs["AZURE"][
+                "SPEAKER_ID"
+            ]
 
-        self.audio_config = AudioConfig(filename='')
-        self.client = SpeechSynthesizer(speech_config=self.speech_config, audio_config=self.audio_config)
+        self.audio_config = AudioConfig(filename="")
+        self.client = SpeechSynthesizer(
+            speech_config=self.speech_config, audio_config=self.audio_config
+        )
         self.speakers_name_dict = {
-            'ja-JP-NanamiNeural': 'Nanami@Normal',
-            'ja-JP-KeitaNeural': 'Keita@Normal',
-            'ja-JP-AoiNeural': 'Aoi@Normal',
-            'ja-JP-DaichiNeural': 'Daichi@Normal',
-            'ja-JP-MayuNeural': 'Mayu@Normal',
-            'ja-JP-NaokiNeural': 'Naoki@Normal',
-            'ja-JP-ShioriNeural': 'Shiori@Normal',
-            'ja-JP-MasaruMultilingualNeural': 'Masaru@Multilingual',
-            'ja-JP-Masaru:DragonHDLatestNeural': 'Masaru@DragonHDLatest',
+            "ja-JP-NanamiNeural": "Nanami@Normal",
+            "ja-JP-KeitaNeural": "Keita@Normal",
+            "ja-JP-AoiNeural": "Aoi@Normal",
+            "ja-JP-DaichiNeural": "Daichi@Normal",
+            "ja-JP-MayuNeural": "Mayu@Normal",
+            "ja-JP-NaokiNeural": "Naoki@Normal",
+            "ja-JP-ShioriNeural": "Shiori@Normal",
+            "ja-JP-MasaruMultilingualNeural": "Masaru@Multilingual",
+            "ja-JP-Masaru:DragonHDLatestNeural": "Masaru@DragonHDLatest",
         }
 
-    def generate_audio_query(self, text: str, tts_configs: dict[str, Any] | None = None) -> None:  # noqa: ARG002
+    def generate_audio_query(
+        self, text: str, tts_configs: dict[str, Any] | None = None
+    ) -> None:  # noqa: ARG002
         # NOTE: 他のAPIと合わせるためにデータは受けるが使わない.
         """
         Generate an audio query from the given text.
@@ -84,15 +91,18 @@ class AzureWrapper(TTSWrapper):
         Returns:
             Any: The generated voice data.
         """
-        if tts_configs['AZURE']['SPEAKER_ID'] != '':
-            self.speech_config.speech_synthesis_voice_name = tts_configs['AZURE']['SPEAKER_ID']
-            self.client = SpeechSynthesizer(speech_config=self.speech_config, audio_config=self.audio_config)
+        if tts_configs["AZURE"]["SPEAKER_ID"] != "":
+            self.speech_config.speech_synthesis_voice_name = tts_configs["AZURE"][
+                "SPEAKER_ID"
+            ]
 
-        with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as wf:
-            wf.write(b'')
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as wf:
+            wf.write(b"")
             file_path = wf.name
 
         self.audio_config = AudioConfig(filename=file_path)
-        self.client = SpeechSynthesizer(speech_config=self.speech_config, audio_config=self.audio_config)
+        self.client = SpeechSynthesizer(
+            speech_config=self.speech_config, audio_config=self.audio_config
+        )
         self.client.speak_text_async(audio_query).get()
         return file_path
