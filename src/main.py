@@ -29,7 +29,8 @@ if __name__ == '__main__':
     intents = discord.Intents.default()
     intents.message_content = True  # permission to retrieve message content
     intents.voice_states = True
-    discord_client = commands.Bot(command_prefix=configs['DISCORD']['COMMAND_PREFIX'], intents=intents)
+    command_prefix = configs['DISCORD']['COMMAND_PREFIX']
+    discord_client = commands.Bot(command_prefix=command_prefix, intents=intents)
 
     # TTS settings
     tts_client = ttsfunc.get_tts_client(configs['TTS'])
@@ -45,7 +46,7 @@ if __name__ == '__main__':
         Args:
             ctx (commands.Context): The context of the command invocation.
         """
-        is_target_text_channel = ctx.channel.name == configs['DISCORD']['TARGET_TEXT_CHANNEL']
+        is_target_text_channel = ctx.channel.id == configs['DISCORD']['TARGET_TEXT_CHANNEL']
         is_user_in_voice_channel = ctx.message.author.voice is not None
         if is_target_text_channel:
             if is_user_in_voice_channel:
@@ -66,7 +67,7 @@ if __name__ == '__main__':
         Args:
             ctx (commands.Context): The context of the command invocation.
         """
-        is_target_text_channel = ctx.channel.name == configs['DISCORD']['TARGET_TEXT_CHANNEL']
+        is_target_text_channel = ctx.channel.id == configs['DISCORD']['TARGET_TEXT_CHANNEL']
         is_bot_in_voice_channel = ctx.message.guild.voice_client is not None
         if is_target_text_channel:
             if is_bot_in_voice_channel:
@@ -143,11 +144,13 @@ if __name__ == '__main__':
         is_target_text_channel = message.channel.id == configs['DISCORD']['TARGET_TEXT_CHANNEL']
         is_voice_in = message.guild.voice_client is not None
         if len(message.content) > 0:
-            is_command = message.content[0] == configs['DISCORD']['COMMAND_PREFIX']
+            is_command = message.content[0] == command_prefix
         else:
             return
 
-        if is_human and is_target_text_channel and not is_command and is_voice_in:
+        if is_command:
+            await discord_client.process_commands(message)
+        elif is_human and is_target_text_channel and is_voice_in:
             sound_controller = sndutl.SoundController()
             user_name = message.author.display_name
             sound_file_name = await ttsfunc.make_sound_file(user_name, tts_client, configs['TTS'])
@@ -159,7 +162,7 @@ if __name__ == '__main__':
             is_make_voice = False
             message_text = message.content
             for letter in message_text:
-                is_sp, is_p, is_e, is_q, is_n, is_s = word_marks.check_letter(letter)  # noqa: RUF059
+                is_sp, is_p, is_e, is_q, is_n, is_s = word_marks.check_letter(letter)
                 is_including_url = url_ctrl.is_including_url(text_buffer)
                 if not is_sp and is_make_voice and len(text_buffer) > 0:
                     text_buffer = url_ctrl.url2alternative_text(text_buffer, configs['TTS']['ALTERNATIVE_TEXT'])
@@ -190,7 +193,5 @@ if __name__ == '__main__':
             while not sound_controller.is_finish_all_thread():
                 await asyncio.sleep(0.1)
                 sound_controller.thread_control()
-
-            return
 
     discord_client.run(configs['DISCORD']['API_KEY'])
