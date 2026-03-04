@@ -159,7 +159,7 @@ if __name__ == '__main__':
             is_make_voice = False
             message_text = message.content
             for letter in message_text:
-                is_sp, is_p, is_e, is_q, is_n, is_s = word_marks.check_letter(letter)
+                is_sp, is_p, is_e, is_q, is_n, is_s = word_marks.check_letter(letter)  # noqa: RUF059
                 is_including_url = url_ctrl.is_including_url(text_buffer)
                 if not is_sp and is_make_voice and len(text_buffer) > 0:
                     text_buffer = url_ctrl.url2alternative_text(text_buffer, configs['TTS']['ALTERNATIVE_TEXT'])
